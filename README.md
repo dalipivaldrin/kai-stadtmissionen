@@ -1,124 +1,127 @@
-# Kai – Stadtmissionen 🏙️
+# Kai – City Missions 🏙️
 
-Ein 2D-Jump'n'Run im Browser, gebaut mit reinem **HTML5 Canvas und JavaScript** – ohne Framework, ohne Bilder, ohne externe Abhängigkeiten. Alles (Figur, Gegner, Hintergründe, Sounds) wird direkt im Code erzeugt.
+A 2D browser platformer built with plain **HTML5 Canvas and JavaScript** – no framework, no image files, no external dependencies. Everything (character, enemies, backgrounds, sounds) is generated directly in code.
 
-**▶ Jetzt spielen:** https://dalipivaldrin.github.io/kai-stadtmissionen/
+**▶ Play now:** https://dalipivaldrin.github.io/kai-stadtmissionen/
+
+> The in-game text is in German.
 
 ---
 
-## Die Idee
+## The Idea
 
-Ich wollte ein Plattform-Spiel im Stil der klassischen Jump'n'Runs machen – aber mit einer **eigenen Figur und eigener Spielidee**, nicht als Kopie von Super Mario.
+I wanted to make a platformer in the style of classic jump'n'run games – but with **my own character and my own game concept**, not a copy of Super Mario.
 
-Daraus entstand **Kai**, ein Stadtkurier mit türkisem Hoodie, Kopfhörern und Rucksack. Statt einfach nur ans Levelende zu rennen, muss Kai in jedem Level eine **Mission** erfüllen. Erst wenn die Mission erledigt ist, öffnet sich das Ziel.
+The result is **Kai**, a city courier with a teal hoodie, headphones and a backpack. Instead of just running to the end of the level, Kai has to complete a **mission** in every level. The goal only unlocks once the mission is done.
 
-| Mission | Thema | Aufgabe | Ziel |
+| Mission | Theme | Task | Goal |
 |---|---|---|---|
-| 1 – Der Paketbote | Stadt am Tag | 5 verstreute Pakete einsammeln | Briefkasten |
-| 2 – Stromausfall | Fabrik in der Abenddämmerung | 5 Notstrom-Schalter umlegen | Fabriktür |
-| 3 – Katzenrettung | Dächer in der Nacht | 5 Kätzchen retten (sie laufen Kai hinterher) | Tierheim |
+| 1 – The Courier | City by day | Collect 5 scattered packages | Mailbox |
+| 2 – Blackout | Factory at dusk | Flip 5 emergency power switches | Factory door |
+| 3 – Kitten Rescue | Rooftops at night | Rescue 5 kittens (they follow Kai) | Animal shelter |
 
-## Steuerung
+## Controls
 
-| Aktion | Tastatur | Handy |
+| Action | Keyboard | Mobile |
 |---|---|---|
-| Laufen | ← → oder A / D | ◀ ▶ |
-| Springen | ↑, W oder Leertaste | ▲ |
-| Pause | P oder Esc | – |
-| Bestätigen | Enter / Leertaste | Bildschirm antippen |
+| Move | ← → or A / D | ◀ ▶ |
+| Jump | ↑, W or Space | ▲ |
+| Pause | P or Esc | – |
+| Confirm | Enter / Space | Tap the screen |
 
-**Tipps:** Auf Roboter und Drohnen springen schaltet sie aus. Hält man beim Draufspringen die Sprungtaste, springt Kai höher ab. Kontrollpunkt-Fahnen speichern den Fortschritt.
+**Tips:** Jump on robots and drones to defeat them. Holding jump while stomping gives a higher bounce. Checkpoint flags save your progress.
 
 ---
 
-## Wie ich vorgegangen bin
+## How I Built It
 
-### 1. Konzept festlegen
-Bevor ich Code geschrieben habe, habe ich festgelegt:
-- **Genre:** Side-Scroller-Plattformer mit Missionen
-- **Hauptfigur:** eigene Figur (Kai), klar unterscheidbar von bekannten Spielfiguren
-- **Umfang:** 3 Levels mit steigender Schwierigkeit, je eine eigene Mission und ein eigenes Farbthema
-- **Technik:** eine einzige `index.html`, damit das Spiel überall ohne Installation läuft
+### 1. Defining the concept
+Before writing any code, I decided on:
+- **Genre:** side-scrolling platformer with missions
+- **Main character:** an original character (Kai), clearly different from well-known game characters
+- **Scope:** 3 levels with increasing difficulty, each with its own mission and color theme
+- **Tech:** a single `index.html` so the game runs anywhere without installation
 
-### 2. Technische Grundstruktur
-Das Spiel basiert auf einem klassischen **Game Loop**:
-- `update()` berechnet Bewegung, Kollisionen und Spiellogik
-- `draw()` zeichnet alles auf das Canvas
-- Ein **fester Zeitschritt** (60 Updates pro Sekunde) sorgt dafür, dass das Spiel auf schnellen und langsamen Bildschirmen gleich schnell läuft
+### 2. Technical foundation
+The game is built on a classic **game loop**:
+- `update()` handles movement, collisions and game logic
+- `draw()` renders everything onto the canvas
+- A **fixed time step** (60 updates per second) makes the game run at the same speed on fast and slow screens
 
-Das Spiel hat verschiedene **Zustände** (`title`, `intro`, `play`, `pause`, `clear`, `gameover`, `win`), zwischen denen gewechselt wird.
+The game uses **states** (`title`, `intro`, `play`, `pause`, `clear`, `gameover`, `win`) and switches between them.
 
-### 3. Levels als Kacheln (Tilemap)
-Die Welt ist ein Raster aus 32×32-Pixel-Kacheln (16 Zeilen hoch). Statt jedes Level Zeichen für Zeichen zu tippen, habe ich kleine **Bau-Funktionen** geschrieben:
+### 3. Levels as a tilemap
+The world is a grid of 32×32-pixel tiles (16 rows high). Instead of typing each level character by character, I wrote small **builder functions**:
 
 ```js
-L.ground(0, 25);     // Boden von Spalte 0 bis 25
-L.plat(11, 12, 16);  // Kistenplattform in Zeile 11
-L.put('M', 10, 14);  // Missionsobjekt platzieren
-L.put('G', 13, 22);  // Bodenroboter platzieren
+L.ground(0, 25);     // ground from column 0 to 25
+L.plat(11, 12, 16);  // crate platform in row 11
+L.put('M', 10, 14);  // place a mission item
+L.put('G', 13, 22);  // place a ground robot
 ```
 
-So lassen sich Levels schnell anpassen. Beim Levelaufbau habe ich darauf geachtet, dass Plattformen höchstens 3 Kacheln übereinander liegen und Lücken höchstens 4 Kacheln breit sind – das entspricht der maximalen Sprunghöhe und -weite von Kai.
+This makes levels quick to adjust. When designing levels, I made sure platforms are at most 3 tiles apart vertically and gaps are at most 4 tiles wide – matching Kai's maximum jump height and distance.
 
-### 4. Physik & Steuerung
-Damit sich das Springen gut anfühlt, habe ich ein paar Techniken aus professionellen Plattformern eingebaut:
-- **Beschleunigung & Reibung** statt sofortiger Geschwindigkeit
-- **Variable Sprunghöhe:** Taste kurz drücken = kleiner Sprung, lang halten = hoher Sprung
-- **Coyote Time:** man kann noch kurz springen, nachdem man von einer Kante gelaufen ist
-- **Jump Buffer:** ein Sprung, der kurz vor der Landung gedrückt wird, wird trotzdem ausgeführt
+### 4. Physics & controls
+To make jumping feel good, I used a few techniques from professional platformers:
+- **Acceleration & friction** instead of instant speed
+- **Variable jump height:** tap = small jump, hold = high jump
+- **Coyote time:** you can still jump for a moment after running off a ledge
+- **Jump buffer:** a jump pressed just before landing still triggers
 
-Die Kollision läuft getrennt nach **X- und Y-Achse** gegen die Kacheln (AABB-Kollision).
+Collision is resolved separately on the **X and Y axes** against the tiles (AABB collision).
 
-### 5. Gegner
-- **Schrott-Bot:** fährt am Boden hin und her und dreht an Wänden, Kanten und Stacheln um
-- **Drohne:** fliegt in einer Wellenbewegung hin und her
+### 5. Enemies
+- **Scrap bot:** drives back and forth on the ground and turns around at walls, ledges and spikes
+- **Drone:** flies back and forth in a wave pattern
 
-Landet Kai von oben auf einem Gegner, wird dieser ausgeschaltet. Berührt er ihn seitlich, verliert er ein Leben und wird kurz unverwundbar.
+If Kai lands on an enemy from above, it is defeated. Touching it from the side costs a life and makes Kai briefly invulnerable.
 
-### 6. Grafik ohne Bilddateien
-Alle Grafiken werden mit Canvas-Formen gezeichnet: Kai, Roboter, Drohnen, Pakete, Schalter, Kätzchen, Gebäude. Die Hintergründe haben zwei **Parallax-Ebenen** (weiter entfernte Häuser bewegen sich langsamer), die mit einem Zufallsgenerator mit festem Startwert erzeugt werden, damit jedes Level immer gleich aussieht.
+### 6. Graphics without image files
+All graphics are drawn with canvas shapes: Kai, robots, drones, packages, switches, kittens, buildings. The backgrounds use two **parallax layers** (distant buildings move slower), generated with a seeded random number generator so each level always looks the same.
 
 ### 7. Sound
-Die Soundeffekte (Sprung, Münze, Treffer, Mission erfüllt …) werden mit der **Web Audio API** live erzeugt – kurze Töne mit Oszillatoren, ganz ohne Audiodateien.
+Sound effects (jump, coin, hit, mission complete …) are generated live with the **Web Audio API** – short tones from oscillators, no audio files.
 
-### 8. Missionen, Punkte & Fortschritt
-- Fortschritt der Mission wird oben in der Leiste angezeigt (z. B. `Pakete: 3 / 5`)
-- Das Ziel ist mit einem Schloss gesperrt, bis die Mission erfüllt ist
-- Punkte gibt es für Münzen, Gegner, Missionsobjekte, Zeitbonus und übrige Leben
-- Die Bestleistung wird im Browser gespeichert (`localStorage`)
+### 8. Missions, score & progress
+- Mission progress is shown in the top bar (e.g. `Pakete: 3 / 5`)
+- The goal is locked until the mission is complete
+- Points come from coins, enemies, mission items, a time bonus and remaining lives
+- The high score is saved in the browser (`localStorage`)
 
-### 9. Handy-Unterstützung
-Auf Touch-Geräten erscheinen automatisch Steuerungstasten. Das Canvas skaliert sich an jede Bildschirmgrösse.
+### 9. Mobile support
+On touch devices, on-screen control buttons appear automatically. The canvas scales to any screen size.
 
-### 10. Testen
-Ich habe das Spiel automatisiert mit **Playwright** (Headless-Browser) getestet: alle drei Levels laden, Steuerung reagiert, jedes Level kann abgeschlossen werden und es treten keine JavaScript-Fehler auf. Danach folgte das Feintuning beim Selberspielen.
+### 10. Testing
+I tested the game automatically with **Playwright** (headless browser): all three levels load, controls respond, every level can be completed and no JavaScript errors occur. After that came fine-tuning by playing it myself.
 
 ---
 
-## Projektstruktur
+## Project Structure
 
 ```
 kai-stadtmissionen/
-├── index.html      # Das komplette Spiel (HTML, CSS, JavaScript)
-└── README.md       # Diese Dokumentation
+├── index.html      # The complete game (HTML, CSS, JavaScript)
+└── README.md       # This documentation
 ```
 
-## Lokal starten
+## Run Locally
 
-Repository herunterladen und `index.html` im Browser öffnen – fertig. Kein Server, keine Installation nötig.
+Download the repository and open `index.html` in your browser – that's it. No server, no installation needed.
 
 ```bash
 git clone https://github.com/dalipivaldrin/kai-stadtmissionen.git
 cd kai-stadtmissionen
-# index.html im Browser öffnen
+# open index.html in your browser
 ```
 
-## Ideen für später
-- Weitere Missionen und Levels
-- Bewegliche Plattformen und Power-ups
-- Highscore-Liste
-- Level-Editor
+## Ideas for Later
+- More missions and levels
+- Moving platforms and power-ups
+- High score leaderboard
+- Level editor
+- English language option in the game
 
 ---
 
-Entwickelt von **Valdrin Dalipi** – mit Unterstützung von KI (Claude) bei Planung und Programmierung.
+Developed by **Valdrin Dalipi** – with AI assistance (Claude) for planning and programming.
